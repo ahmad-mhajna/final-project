@@ -1,0 +1,46 @@
+button {
+  padding: 0.25rem 0.5rem;
+  font-size: 15px;
+}
+a {
+  color: unset;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease-in-out;
+}
+button {
+  border: 2px solid gray;
+  background-color: white;
+  color: unset;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+button.alt {
+  border-color: var(--cta-color);
+  color: var(--cta-color);
+  background-color: var(--secondary-color);
+}
+a:hover,
+button:hover {
+  color: var(--cta-color);
+}
+button:hover {
+  border-color: var(--cta-color);
+  background-color: var(--secondary-color);
+}
+button:hover path {
+  color: var(--cta-color);
+}
+path {
+  transition: all 0.2s ease-in-out;
+}
+button.alt path {
+  color: var(--cta-color);
+}
+button.alt:hover,
+button.alt:hover path {
+  background-color: var(--cta-color);
+  color: var(--secondary-color);
+}

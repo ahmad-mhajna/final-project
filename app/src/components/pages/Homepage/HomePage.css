@@ -1,0 +1,49 @@
+.home-cards {
+  margin: 2rem;
+  padding: 2rem;
+}
+.Burger {
+  background: url(./img/burger.webp) center center/cover;
+}
+.Sweets {
+  background: url(./img/sweets.jpg) center center/cover;
+}
+.Icecream {
+  background: url(./img/icecream.jpg) center center/cover;
+}
+.Sandwiches {
+  background: url(./img/Sandwiches.jpg) center center/cover;
+}
+.BBQ {
+  background: url(./img/BBQ.jpg) center center/cover;
+}
+.Bakery {
+  background: url(./img/Bakery.jpg) center center/cover;
+}
+.Pizza {
+  background: url(./img/Pizza.jpg) center center/cover;
+}
+.Italian {
+  background: url(./img/italian.jpg) center center/cover;
+}
+.Shawarma {
+  background: url(./img/Shawarma.webp) center center/cover;
+}
+.Drinks {
+  background: url(./img/drinks.webp) center center/cover;
+}
+.HummusFalafel {
+  background: url(./img/Falafel-with-Hummus.webp) center center/cover;
+}
+.FriedChicken {
+  background: url(./img/fried\ chicken.jpg) center center/cover;
+}
+.Seafood {
+  background: url(./img/seafood.jpg) center center/cover;
+}
+.Asian {
+  background: url(./img/asian.png) center center/cover;
+}
+.Vegan {
+  background: url(./img/vegan.jpg) center center/cover;
+}
