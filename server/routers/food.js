@@ -6,15 +6,16 @@ const {
   deletefood,
 } = require("../controllers/food");
 const auth = require("../middleware/auth");
+const checkPermissions = require("../middleware/checkPermissions");
 
 const router = new express.Router();
 
 router.get("/foods", getAllFoods);
 
-router.post("/foods", auth, newFood);
+router.post("/foods", newFood);
 
-router.put("/foods", auth, editFood);
+router.put("/foods", [auth, checkPermissions], editFood);
 
-router.delete("/foods", auth, deletefood);
+router.delete("/foods", [auth, checkPermissions], deletefood);
 
 module.exports = router;
