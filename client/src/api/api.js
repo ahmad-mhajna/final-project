@@ -1,9 +1,10 @@
 import axios from "axios";
-
+const baseURL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:5000/";
 const apiInstance = axios.create({
-  baseURL: "http://localhost:3000/food",
+  baseURL: `${baseURL}/foods`,
 });
 const apiInstance2 = axios.create({
-  baseURL: "https://6299bd076f8c03a978485945.mockapi.io/user",
+  baseURL: `${baseURL}/user`,
 });
 export { apiInstance, apiInstance2 };
