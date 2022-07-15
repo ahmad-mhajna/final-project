@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Route, useHistory, Router } from "react-router-dom";
 
-import { apiInstance, apiInstance2 } from "./api/api";
+import { apiInstance } from "./api/api";
 import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./components/pages/Homepage/HomePage";
 import Checkout from "./components/pages/Checkout/Checkout";
@@ -27,14 +27,14 @@ function App() {
   const [isEdit, setEdit] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [islogin, setlogin] = useState(true);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState({});
   const [startCategory, setCategory] = useState("");
   const [cart, addToCart] = useState([]);
 
   const getData = async () => {
     spinnerRef.current.classList.remove("hidden");
     try {
-      const response = await apiInstance.get("");
+      const response = await apiInstance.get("/foods");
       setData(response.data);
     } catch (error) {
       console.error(error);
@@ -42,35 +42,46 @@ function App() {
       spinnerRef.current.classList.add("hidden");
     }
   };
-  const updateUser = async () => {
-    spinnerRef.current.classList.remove("hidden");
+
+  const autoLogin = async () => {
     try {
-      await apiInstance2.put(`/${user.id}`, { ...user, cart });
+      const token = window.localStorage.getItem("token");
+      if (token) {
+        const { data } = await apiInstance.post("users/login", { token });
+        apiInstance.defaults.headers = {
+          AUTHORIZATION: `Bearer ${data.token}`,
+        };
+        setUser(data.user);
+      }
     } catch (e) {
       console.error(e);
-    } finally {
-      spinnerRef.current.classList.add("hidden");
+    }
+  };
+  const onLogout = async () => {
+    try {
+      await apiInstance.post("users/logout");
+      window.localStorage.removeItem("token");
+      setUser({});
+    } catch (e) {
+      console.error(e);
     }
   };
   useEffect(() => {
     setAdmin(false);
     getData();
+    autoLogin();
   }, []);
-  useEffect(() => {
-    if (islogin) updateUser();
-    // eslint-disable-next-line
-  }, [cart]);
   useEffect(() => {
     setlogin(user.username !== undefined);
     if (user.username !== undefined) {
-      setAdmin(user.ISadmin);
+      setAdmin(user.isAdmin);
       addToCart((prevState) => [...prevState, ...user.cart]);
     } else setAdmin(false);
   }, [user]);
   const editFood = async () => {
     spinnerRef.current.classList.remove("hidden");
     try {
-      await apiInstance.put(`/${food.id}`, food);
+      await apiInstance.put(`foods/${food._id}`, food);
       getData();
       setFood(initalFood);
       setEdit(false);
@@ -84,7 +95,7 @@ function App() {
   const addFood = async () => {
     spinnerRef.current.classList.remove("hidden");
     try {
-      await apiInstance.post("", food);
+      await apiInstance.post("/foods", food);
       setFood(initalFood);
       getData();
     } catch (e) {
@@ -96,7 +107,7 @@ function App() {
   const deleteFood = async (event) => {
     spinnerRef.current.classList.remove("hidden");
     try {
-      await apiInstance.delete(`/${event.target.getAttribute("data-id")}`);
+      await apiInstance.delete(`foods/${event.target.getAttribute("data-id")}`);
       getData();
     } catch (error) {
       console.error(error);
@@ -110,7 +121,7 @@ function App() {
   return (
     <div className="app-root">
       <Router history={History}>
-        <Navbar isLogin={islogin} user={user} setUser={setUser} />
+        <Navbar isLogin={islogin} user={user} onLogout={onLogout} />
         <Route path="/" exact>
           <HomePage onSelect={onSelect} />
         </Route>

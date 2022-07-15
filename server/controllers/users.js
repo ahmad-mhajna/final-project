@@ -9,19 +9,22 @@ const postUser = async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e.message);
   }
 };
 const userLogin = async (req, res) => {
   try {
-    const user = await User.findByCredentials(
-      req.body.email,
-      req.body.password
-    );
-    const token = await user.generateAuthToken();
+    let user;
+    let token = req.body.token;
+    if (token) {
+      user = await User.findByToken(token);
+    } else {
+      user = await User.findByCredentials(req.body.username, req.body.password);
+      token = await user.generateAuthToken();
+    }
     res.send({ user, token });
   } catch (e) {
-    res.status(400).send();
+    res.status(400).send(e.message);
   }
 };
 const userLogout = async (req, res) => {
@@ -33,7 +36,7 @@ const userLogout = async (req, res) => {
 
     res.send();
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send(e.message);
   }
 };
 const userLogoutAll = async (req, res) => {
@@ -42,7 +45,7 @@ const userLogoutAll = async (req, res) => {
     await req.user.save();
     res.send();
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send(e.message);
   }
 };
 const editProfile = async (req, res) => {
@@ -61,7 +64,7 @@ const editProfile = async (req, res) => {
     await req.user.save();
     res.send(req.user);
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e.message);
   }
 };
 const deleteProfile = async (req, res) => {
@@ -69,7 +72,7 @@ const deleteProfile = async (req, res) => {
     await req.user.remove();
     res.send(req.user);
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send(e.message);
   }
 };
 module.exports = {

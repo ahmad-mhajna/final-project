@@ -14,8 +14,8 @@ router.get("/foods", getAllFoods);
 
 router.post("/foods", newFood);
 
-router.put("/foods", [auth, checkPermissions], editFood);
+router.put("/foods/:id", [auth, checkPermissions], editFood);
 
-router.delete("/foods", [auth, checkPermissions], deletefood);
+router.delete("/foods/:id", [auth, checkPermissions], deletefood);
 
 module.exports = router;

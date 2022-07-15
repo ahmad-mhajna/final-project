@@ -1,93 +1,86 @@
 import React, { useEffect, useRef, useState } from "react";
-import { apiInstance2 } from "../../../api/api";
+import { apiInstance } from "../../../api/api";
 import "./login.css";
 import Button from "../../Button/Button";
 import Input from "../../input/Input";
+import validator from "validator";
 import { Redirect } from "react-router-dom";
-
 function Login({ setUser }) {
   const initaluser = {
     username: "",
+    email: "",
+    age: 18,
     password: "",
     cart: [],
-    ISadmin: false,
   };
-  let timerID;
-  const [errorMessages, setErrorMessages] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [register, setRegister] = useState(false);
-  const [userDateBase, setDataBase] = useState([]);
   const [user, addInfo] = useState(initaluser);
+  const [token, gettoken] = useState("");
+  const [errormessage, setmessage] = useState("");
   const spinnerRef = useRef();
-  const getData = async () => {
-    try {
-      const response = await apiInstance2.get("");
-      setDataBase(response.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-    }
-  };
-  useEffect(() => {
-    getData();
-  }, []);
 
-  const addUser = async () => {
-    spinnerRef.current.classList.remove("hidden");
-    try {
-      await apiInstance2.post("", user);
-      addInfo(initaluser);
-      getData();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      spinnerRef.current.classList.add("hidden");
-    }
-  };
-
-  const errors = {
-    uname: "Invalid Username",
-    pass: "Invalid Password",
-    exist: "User Already Exists",
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let { uname, pass } = document.forms[0];
-
-    const userData = userDateBase.find((user) => user.username === uname.value);
-
-    if (userData) {
-      if (userData.password !== pass.value) {
-        setErrorMessages({ name: "pass", message: errors.pass });
-      } else {
-        setIsSubmitted(true);
-        setUser(userData);
-      }
-    } else {
-      setErrorMessages({ name: "uname", message: errors.uname });
+    try {
+      const { data } = await apiInstance.post("/users/login", user);
+      gettoken(data.token);
+      window.localStorage.setItem("token", data.token);
+      setIsSubmitted(true);
+      apiInstance.defaults.headers = {
+        AUTHORIZATION: `Bearer ${data.token}`,
+      };
+      setUser(data.user);
+    } catch (error) {
+      setmessage(error.response.data);
     }
   };
 
-  const renderErrorMessage = (name) =>
-    name === errorMessages.name && (
-      <div className="error">{errorMessages.message}</div>
-    );
+  const handleRegister = async (event) => {
+    event.preventDefault();
 
+    try {
+      const { data } = await apiInstance.post("/users", user);
+      gettoken(data.token);
+      window.localStorage.setItem("token", data.token);
+      setIsSubmitted(true);
+      apiInstance.defaults.headers = {
+        AUTHORIZATION: `Bearer ${data.token}`,
+      };
+      setUser(data.user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const renderForm = (
     <div className="form">
       <form onSubmit={handleSubmit}>
         <div className="input-container">
-          <label>Username </label>
-          <input type="text" name="uname" required />
-          {renderErrorMessage("uname")}
+          <Input
+            label="Username"
+            placeholder="Enter Username..."
+            onChange={(event) => {
+              addInfo({
+                ...user,
+                username: event.target.value,
+              });
+            }}
+          />
         </div>
         <div className="input-container">
-          <label>Password </label>
-          <input type="password" name="pass" required />
-          {renderErrorMessage("pass")}
+          <Input
+            label="Password"
+            placeholder="Enter password..."
+            onChange={(event) => {
+              addInfo({
+                ...user,
+                password: event.target.value,
+              });
+            }}
+          />
         </div>
+        <span className="error">{errormessage}</span>
         <div className="button-container">
           <Button type="submit" text="Submit" />
         </div>
@@ -116,29 +109,10 @@ function Login({ setUser }) {
       {register && (
         <div className="registerForm">
           <h2>Register</h2>
-          <form
-            action="/"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (
-                userDateBase.find(
-                  (tempUser) => tempUser.username === user.username
-                ) === undefined
-              ) {
-                addUser();
-                setRegister(false);
-              } else {
-                clearTimeout(timerID);
-                setErrorMessages({ name: "exists", message: errors.exist });
-                timerID = setTimeout(() => {
-                  setErrorMessages({});
-                }, 3000);
-              }
-            }}
-          >
+          <form action="/" onSubmit={handleRegister}>
             <Input
-              label="Name"
-              placeholder="Enter Name..."
+              label="Username"
+              placeholder="Enter Username..."
               onChange={(event) => {
                 addInfo({
                   ...user,
@@ -146,6 +120,33 @@ function Login({ setUser }) {
                 });
               }}
             />
+            <Input
+              label="email"
+              placeholder="Enter email..."
+              onChange={(event) => {
+                addInfo({
+                  ...user,
+                  email: event.target.value,
+                });
+              }}
+            />
+            {!validator.isEmail(user.email) && user.email !== "" && (
+              <span className="error">Email is invalid</span>
+            )}
+            <Input
+              label="age"
+              placeholder="Enter age..."
+              type="number"
+              onChange={(event) => {
+                addInfo({
+                  ...user,
+                  age: +event.target.value,
+                });
+              }}
+            />
+            {typeof user.age !== "number" && (
+              <span className="error">Age should be a number</span>
+            )}
             <Input
               label="password"
               placeholder="Enter password..."
@@ -156,7 +157,11 @@ function Login({ setUser }) {
                 });
               }}
             />
-            {renderErrorMessage("exists")}
+            {user.password.length < 7 && user.password !== "" && (
+              <span className="error">
+                Password should be longer than 7 characters
+              </span>
+            )}
             <Button type="submit" text="Submit" />
             <Button
               type="button"

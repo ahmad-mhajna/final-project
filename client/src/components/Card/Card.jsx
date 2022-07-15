@@ -29,14 +29,14 @@ class Card extends React.Component {
             >
               <Button
                 text="Edit"
-                id={this.props.food.id}
+                id={this.props.food._id}
                 className="cart-btn alt"
               />
             </Link>
             <Button
               text="Delete"
               onClick={this.props.deleteFood}
-              id={this.props.food.id}
+              id={this.props.food._id}
               className="cart-btn alt"
             />
           </div>

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Button from "../Button/Button";
 import "./Navbar.css";
-function Navbar({ currentPage, isLogin, user, setUser }) {
+function Navbar({ currentPage, isLogin, user, onLogout }) {
   return (
     <nav>
       {currentPage !== "checkout" && <Link to="/checkout">Checkout</Link>}
@@ -11,13 +11,7 @@ function Navbar({ currentPage, isLogin, user, setUser }) {
       {isLogin && (
         <div className="user">
           Hello {user.username}
-          <Button
-            onClick={() => {
-              setUser([]);
-            }}
-            text="logout"
-            className="alt"
-          />
+          <Button onClick={onLogout} text="logout" className="alt" />
         </div>
       )}
     </nav>
