@@ -20,7 +20,7 @@ class CheckoutCard extends React.Component {
               this.props.addToCart((prevState) => {
                 const stateCopy = [...prevState];
                 const foodCopy = stateCopy.find(
-                  (item) => item.id === this.props.food.id
+                  (item) => item._id === this.props.food._id
                 );
                 foodCopy.quantity++;
                 return stateCopy;
@@ -37,13 +37,13 @@ class CheckoutCard extends React.Component {
                 if (this.props.food.quantity > 1) {
                   const stateCopy = [...prevState];
                   const foodCopy = stateCopy.find(
-                    (item) => item.id === this.props.food.id
+                    (item) => item._id === this.props.food._id
                   );
                   foodCopy.quantity--;
                   return stateCopy;
                 } else {
                   return prevState.filter(
-                    (item) => item.id !== this.props.food.id
+                    (item) => item._id !== this.props.food._id
                   );
                 }
               });
@@ -57,7 +57,9 @@ class CheckoutCard extends React.Component {
           text="Remove"
           onClick={() => {
             this.props.addToCart((prevState) => {
-              return prevState.filter((item) => item.id !== this.props.food.id);
+              return prevState.filter(
+                (item) => item._id !== this.props.food._id
+              );
             });
           }}
           className="alt"

@@ -50,7 +50,7 @@ const userLogoutAll = async (req, res) => {
 };
 const editProfile = async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age"];
+  const allowedUpdates = ["name", "email", "password", "age", "cart"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );

@@ -26,7 +26,7 @@ function App() {
   const [food, setFood] = useState(initalFood);
   const [isEdit, setEdit] = useState(false);
   const [admin, setAdmin] = useState(false);
-  const [islogin, setlogin] = useState(true);
+  const [islogin, setlogin] = useState(false);
   const [user, setUser] = useState({});
   const [startCategory, setCategory] = useState("");
   const [cart, addToCart] = useState([]);
@@ -42,6 +42,20 @@ function App() {
       spinnerRef.current.classList.add("hidden");
     }
   };
+
+  useEffect(() => {
+    const updateCart = async () => {
+      if (islogin) {
+        await apiInstance.put("/users/me", { cart });
+      }
+    };
+    updateCart();
+  }, [cart]);
+  useEffect(() => {
+    if (islogin) {
+      addToCart(user.cart);
+    } else addToCart([]);
+  }, [islogin]);
 
   const autoLogin = async () => {
     try {

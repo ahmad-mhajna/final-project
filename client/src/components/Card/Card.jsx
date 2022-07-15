@@ -46,12 +46,12 @@ class Card extends React.Component {
           text="Add to Cart"
           onClick={() => {
             this.props.addToCart((prevState) => {
-              if (!prevState.find((item) => item.id === this.props.food.id))
+              if (!prevState.find((item) => item._id === this.props.food._id))
                 return [...prevState, { ...this.props.food, quantity: 1 }];
               else {
                 const stateCopy = [...prevState];
                 const foodCopy = stateCopy.find(
-                  (item) => item.id === this.props.food.id
+                  (item) => item._id === this.props.food._id
                 );
                 foodCopy.quantity++;
                 return stateCopy;
